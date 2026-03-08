@@ -13,11 +13,6 @@ A collection of ONNX models for Dolphin Automatic Speech Recognition by Dataocea
 - **40 Eastern Languages**: Supports languages across East Asia, South Asia, Southeast Asia, and the Middle East
 - **22 Chinese Dialects**: Comprehensive Chinese dialect support
 - **210,000+ Hours**: Trained on extensive proprietary and open-source datasets
-- **Multitask Capabilities**:
-  - Speech Recognition (ASR)
-  - Voice Activity Detection (VAD)
-  - Speech Segmentation
-  - Language Identification (LID)
 
 ---
 
@@ -65,7 +60,7 @@ All models share the same tokenizer using `tokens.txt`.
 
 ## Usage
 
-This model collection is designed for integration with the upcoming **ppu-voice** package.
+This model collection is designed for integration with the upcoming **ppu-voiceland** package.
 
 ---
 
