@@ -2,6 +2,9 @@
 
 A collection of ONNX models for Dolphin Automatic Speech Recognition by DataoceanAI and Tsinghua University.
 
+>[!IMPORTANT]
+> The model also available at Huggingface https://huggingface.co/onnx-community/dataocean-dolphin-asr
+
 ---
 
 ## Overview
