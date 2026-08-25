@@ -1,0 +1,61 @@
+name: Publish to Hugging Face
+
+# Mirrors the ONNX and ORT weights to the Hugging Face Hub, which serves them
+# over a CDN instead of Git LFS. The LFS copies stay where they are: the README
+# points at this repository for downloads, so removing them would break anyone
+# following it.
+#
+# The checkout deliberately does NOT fetch LFS. The media host still serves the
+# objects when the LFS batch API is refused for exceeding the bandwidth budget,
+# and the script verifies each download against the sha256 in its pointer.
+#
+# Requires an HF_TOKEN secret: a write token for the target repo. For a repo
+# under an organisation, the token's account needs write access to that org.
+
+on:
+  workflow_dispatch:
+    inputs:
+      hf_repo:
+        description: Target Hugging Face repo
+        required: true
+        default: onnx-community/dataocean-dolphin-asr
+      dry_run:
+        description: Fetch and verify the payload, upload nothing
+        type: boolean
+        default: false
+
+concurrency:
+  group: publish-huggingface
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Check out pointers only
+        uses: actions/checkout@v5
+        with:
+          lfs: false
+
+      # The staged tree is ~5.5 GB. A hosted runner has room, but not so much
+      # that it is worth finding out the hard way half an hour in.
+      - name: Report free disk
+        run: df -h /
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install --quiet "huggingface_hub>=0.34"
+
+      - name: Fetch, verify, and upload
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_REPO: ${{ inputs.hf_repo }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          SOURCE_REF: ${{ github.ref_name }}
+        run: python .github/scripts/publish_huggingface.py
